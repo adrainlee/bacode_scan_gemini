@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic
+pandas
+openpyxl # Required by pandas for Excel export
+python-multipart # For form data if needed later
+gunicorn

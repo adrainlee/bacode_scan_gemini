@@ -1,0 +1,35 @@
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      # Add the database file as a volume to persist data
+      - ./backend/scans.db:/app/scans.db
+    # Ensure backend starts before frontend depends on it (optional, good practice)
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 5
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      # - ./frontend:/app # Removed: Mounts host code, overwriting standalone build
+      # Prevent node_modules from being overwritten by the host volume
+      - /app/node_modules
+      # Prevent .next from being overwritten by the host volume
+      - /app/.next
+    environment:
+      # Ensure the frontend knows where the backend API is
+      # Adjust NEXT_PUBLIC_API_URL if your frontend code uses a different env variable
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+    depends_on:
+      # - backend # Uncomment if using healthcheck
+      backend:
+        condition: service_started # Or use service_healthy with healthcheck
