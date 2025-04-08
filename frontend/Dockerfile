@@ -16,8 +16,6 @@ RUN npm install --frozen-lockfile
 # Define ARG to accept the API URL during build
 ARG NEXT_PUBLIC_API_URL
 FROM base AS builder
-# Set the ENV var within the builder stage so 'npm run build' can access it
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -27,7 +25,8 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN npm run build
+# Pass the ARG directly to the build command's environment
+RUN NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL} npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
