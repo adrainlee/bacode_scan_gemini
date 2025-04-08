@@ -13,7 +13,11 @@ COPY package.json package-lock.json* ./
 RUN npm install --frozen-lockfile
 
 # Rebuild the source code only when needed
+# Define ARG to accept the API URL during build
+ARG NEXT_PUBLIC_API_URL
 FROM base AS builder
+# Set the ENV var within the builder stage so 'npm run build' can access it
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .

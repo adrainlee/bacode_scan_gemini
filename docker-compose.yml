@@ -16,7 +16,11 @@ services:
     #   retries: 5
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        # Pass the API URL as a build argument to Dockerfile
+        - NEXT_PUBLIC_API_URL=http://backend:8000
     ports:
       - "3000:3000"
     volumes:
